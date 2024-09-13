@@ -13,9 +13,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Unit tests for the {@link dev.coms4156.project.individualproject.MyFileDatabase} class.
@@ -23,24 +20,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * <p>This class contains test cases to validate the functionality of the {@link
  * dev.coms4156.project.individualproject.MyFileDatabase} class methods.
  */
-@ExtendWith(MockitoExtension.class)
-public class MyFileDatabaseTests {
+public abstract class MyFileDatabaseTests {
 
-  private static final String FILE_PATH = "src/test/resources/mockData.txt";
-  private HashMap<String, Department> mockDepartmentMapping;
-  @Mock private MyFileDatabase db;
+  private static final String FILE_PATH = "src/test/resources/testData.txt";
+  protected HashMap<String, Department> testDepartmentMapping;
+  private MyFileDatabase db;
 
   /**
    * Set up the myFileDatabase unit tests by initializing a test ECON and COMS department with 2
    * test courses per each department.
    */
   @BeforeEach
-  public void setUp() throws IOException {
-    // delete FILE_PATH (data.txt) if it exists
+  public void myFileDatabaseSetUp() throws IOException {
+    // delete FILE_PATH (data.txt) if it exists, for fresh start
     Files.deleteIfExists(Paths.get(FILE_PATH));
 
-    // init mock department mapping
-    mockDepartmentMapping = new HashMap<>();
+    // init test department mapping
+    testDepartmentMapping = new HashMap<>();
 
     // CS courses
     Course csCourse1 = new Course("Adam Cannon", "417 IAB", "11:40-12:55", 30);
@@ -58,35 +54,50 @@ public class MyFileDatabaseTests {
     econCourses.put("2257", econCourse2);
     Department econDepartment = new Department("ECON", econCourses, "Michael Woodford", 2345);
 
-    mockDepartmentMapping.put("COMS", csDepartment);
-    mockDepartmentMapping.put("ECON", econDepartment);
-
-    // init MyFileDatabase instance
+    testDepartmentMapping.put("COMS", csDepartment);
+    testDepartmentMapping.put("ECON", econDepartment);
     db = new MyFileDatabase(1, FILE_PATH);
   }
 
+  /** Tests if the MyFileDatabase constructor initializes departmentMapping as an empty HashMap. */
   @Test
   public void constructorCorrectValidation() {
-    // Validate that departmentMapping is initialized as an empty HashMap
-    assertTrue(db.getDepartmentMapping().isEmpty());
+    assertTrue(
+        db.getDepartmentMapping().isEmpty(),
+        "Expected departmentMapping to be initialized as an empty HashMap.");
   }
 
+  /**
+   * Tests if the MyFileDatabase constructor throws an IllegalArgumentException when given an
+   * invalid flag.
+   */
   @Test
   public void constructorWithInvalidFlag() {
     IllegalArgumentException thrown =
         assertThrows(IllegalArgumentException.class, () -> new MyFileDatabase(2, FILE_PATH));
-    assertEquals("Invalid flag value: 2", thrown.getMessage());
+    assertEquals(
+        "Invalid flag value: 2",
+        thrown.getMessage(),
+        "Expected exception message for invalid flag value.");
   }
 
+  /** Tests if the setMapping() method sets the department mapping correctly. */
   @Test
   public void setMappingExpectedValueValidation() {
-    db.setMapping(mockDepartmentMapping);
-    assertEquals(mockDepartmentMapping, db.getDepartmentMapping());
+    db.setMapping(testDepartmentMapping);
+    assertEquals(
+        testDepartmentMapping,
+        db.getDepartmentMapping(),
+        "Expected departmentMapping to match testDepartmentMapping.");
   }
 
+  /**
+   * Tests if the saveContentsToFile() method correctly writes and serializes the department mapping
+   * to a file.
+   */
   @Test
   public void saveContentsToFileValidation() throws IOException, ClassNotFoundException {
-    db.setMapping(mockDepartmentMapping);
+    db.setMapping(testDepartmentMapping);
     db.saveContentsToFile();
 
     // basically deSerializeObjectFromFile()
@@ -94,39 +105,48 @@ public class MyFileDatabaseTests {
     @SuppressWarnings("unchecked")
     HashMap<String, Department> deserializedMapping = (HashMap<String, Department>) in.readObject();
 
-    // ensure output from file matches the provided output in mockDepartmentMapping
+    // ensure output from file matches the provided output in testDepartmentMapping
     assertEquals(
-        mockDepartmentMapping.toString(),
+        testDepartmentMapping.toString(),
         deserializedMapping.toString(),
-        "Expected mockDepartmentMapping and deserializedMapping to have the same string output");
+        "Expected testDepartmentMapping and deserializedMapping to have the same string output.");
   }
 
+  /** Tests if the saveContentsToFile() method creates the file at the specified path. */
   @Test
   public void saveContentsToFileEnsureFileExists() {
     // set mapping for departments, then save to FILE_PATH
-    db.setMapping(mockDepartmentMapping);
+    db.setMapping(testDepartmentMapping);
     db.saveContentsToFile();
 
     // Ensure file exists
     Path filePath = Paths.get(FILE_PATH);
-    assertTrue(Files.exists(filePath), "Expected " + filePath + " to exist.");
+    assertTrue(Files.exists(filePath), "Expected file at " + filePath + " to exist.");
   }
 
+  /**
+   * Tests if the deSerializeObjectFromFile() method correctly deserializes the department mapping
+   * from the file.
+   */
   @Test
   public void deSerializeFromFileValidation() {
-    db.setMapping(mockDepartmentMapping);
+    db.setMapping(testDepartmentMapping);
     db.saveContentsToFile();
     HashMap<String, Department> deSerializedDepartmentMapping = db.deSerializeObjectFromFile();
 
     assertEquals(
-        mockDepartmentMapping.toString(),
+        testDepartmentMapping.toString(),
         deSerializedDepartmentMapping.toString(),
-        "Expected mockDepartmentMapping and deSerializedDepartmentMapping to have the same string output");
+        "Expected testDepartmentMapping and deSerializedDepartmentMapping to have the same "
+            + "string output.");
   }
 
+  /**
+   * Tests if the toString() method of MyFileDatabase produces the expected formatted string output.
+   */
   @Test
   public void toStringExpectedValueValidation() {
-    db.setMapping(mockDepartmentMapping);
+    db.setMapping(testDepartmentMapping);
 
     // Verify that the toString method produces the correct output
     String expected =
@@ -142,6 +162,7 @@ public class MyFileDatabaseTests {
             ECON 2257:\s
             Instructor: Tamrat Gashaw; Location: 428 PUP; Time: 10:10-11:25
             """;
-    assertEquals(expected, db.toString());
+    assertEquals(
+        expected, db.toString(), "Expected toString() output to match the formatted string.");
   }
 }
