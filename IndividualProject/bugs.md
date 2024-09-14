@@ -1,5 +1,8 @@
 # Bugs
 
+Almost all of my bugs were caught BEFORE I ran PMD as I was starting to write tests. The format does
+not look clear compared to PMD output, but hopefully this is not too difficult to read through.
+
 ### Bugs/Updates in `Course`
 
 - **Method Name**: `enrollStudent()`
