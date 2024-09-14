@@ -87,24 +87,6 @@ public class MyFileDatabaseTests extends InitializeDatabase {
     assertTrue(Files.exists(filePath), "Expected file at " + filePath + " to exist.");
   }
 
-  //  /**
-  //   * Tests if the deSerializeObjectFromFile() method correctly deserializes the department
-  // mapping
-  //   * from the file.
-  //   */
-  //  @Test
-  //  public void deSerializeFromFileValidation() {
-  //    db.setMapping(testDepartmentMapping);
-  //    db.saveContentsToFile();
-  //    HashMap<String, Department> deSerializedDepartmentMapping = db.deSerializeObjectFromFile();
-  //
-  //    assertEquals(
-  //        testDepartmentMapping.toString(),
-  //        deSerializedDepartmentMapping.toString(),
-  //        "Expected testDepartmentMapping and deSerializedDepartmentMapping to have the same "
-  //            + "string output.");
-  //  }
-
   /**
    * Tests if the toString() method of MyFileDatabase produces the expected formatted string output.
    */

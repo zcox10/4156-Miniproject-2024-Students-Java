@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ public class DepartmentTests {
   private Course course2;
 
   /** The map of course IDs to Course instances for testing. */
-  private HashMap<String, Course> courses;
+  private Map<String, Course> courses;
 
   /** An empty Department instance used for testing. */
   private Department emptyDepartment;

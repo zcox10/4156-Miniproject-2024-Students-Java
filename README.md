@@ -7,4 +7,5 @@ see all audit checks relating to Checkstyle violations, all tests that have run,
 status of the build. `PMD` is added as a dependency within the `pom.xml` file. This assignment was
 completed on Mac OS using IntelliJ. Additional dependencies that were added are `mockito-core`,
 `mockito-junit-jupiter`, `junit-jupiter-engine`, and, for reporting,
-`maven-project-info-reports-plugin`. See the `pom.xml` for specific versions.
+`maven-project-info-reports-plugin`. See the `pom.xml` for specific versions. All information
+relating to bug/style fixes can be found in `bugs.md`.
