@@ -2,6 +2,7 @@ package dev.coms4156.project.individualproject;
 
 import jakarta.annotation.PreDestroy;
 import java.util.HashMap;
+import java.util.Map;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +16,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IndividualProjectApplication implements CommandLineRunner {
 
+  private static final String SETUP_COMMAND = "setup";
+  public static MyFileDatabase myFileDatabase;
+  private static boolean saveData = true;
+
   /**
    * The main launcher for the service all it does is make a call to the overridden run method.
    *
@@ -25,15 +30,26 @@ public class IndividualProjectApplication implements CommandLineRunner {
   }
 
   /**
+   * Overrides the database reference, used when testing.
+   *
+   * @param testData A {@code MyFileDatabase} object referencing test data.
+   */
+  public static void overrideDatabase(MyFileDatabase testData) {
+    myFileDatabase = testData;
+    saveData = false;
+  }
+
+  /**
    * This contains all the setup logic, it will mainly be focused on loading up and creating an
    * instance of the database based off a saved file or will create a fresh database if the file is
    * not present.
    *
    * @param args A {@code String[]} of any potential runtime args
    */
+  @Override
   public void run(String[] args) {
     for (String arg : args) {
-      if (arg.equals("setup")) {
+      if (SETUP_COMMAND.equals(arg)) {
         myFileDatabase = new MyFileDatabase(1, "./data.txt");
         resetDataFile();
         System.out.println("System Setup");
@@ -42,16 +58,6 @@ public class IndividualProjectApplication implements CommandLineRunner {
     }
     myFileDatabase = new MyFileDatabase(0, "./data.txt");
     System.out.println("Start up");
-  }
-
-  /**
-   * Overrides the database reference, used when testing.
-   *
-   * @param testData A {@code MyFileDatabase} object referencing test data.
-   */
-  public static void overrideDatabase(MyFileDatabase testData) {
-    myFileDatabase = testData;
-    saveData = false;
   }
 
   /** Allows for data to be reset in event of errors. */
@@ -76,7 +82,7 @@ public class IndividualProjectApplication implements CommandLineRunner {
     coms3827.setEnrolledStudentCount(283);
     Course coms4156 = new Course("Gail Kaiser", "501 NWC", times[2], 120);
     coms4156.setEnrolledStudentCount(109);
-    HashMap<String, Course> courses = new HashMap<>();
+    Map<String, Course> courses = new HashMap<>();
     courses.put("1004", coms1004);
     courses.put("3134", coms3134);
     courses.put("3157", coms3157);
@@ -86,7 +92,7 @@ public class IndividualProjectApplication implements CommandLineRunner {
     courses.put("3827", coms3827);
     courses.put("4156", coms4156);
     Department compSci = new Department("COMS", courses, "Luca Carloni", 2700);
-    HashMap<String, Department> mapping = new HashMap<>();
+    Map<String, Department> mapping = new HashMap<>();
     mapping.put("COMS", compSci);
 
     // data for econ dept
@@ -289,8 +295,4 @@ public class IndividualProjectApplication implements CommandLineRunner {
       myFileDatabase.saveContentsToFile();
     }
   }
-
-  // Database Instance
-  public static MyFileDatabase myFileDatabase;
-  private static boolean saveData = true;
 }

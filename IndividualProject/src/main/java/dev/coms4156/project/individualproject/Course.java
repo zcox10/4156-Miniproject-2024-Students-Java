@@ -101,6 +101,15 @@ public class Course implements Serializable {
   }
 
   /**
+   * Returns boolean to determine if a course is full or not.
+   *
+   * @return true if full; else false.
+   */
+  public boolean isCourseFull() {
+    return enrolledStudentCount >= enrollmentCapacity;
+  }
+
+  /**
    * Drops a student from the course if a student is enrolled.
    *
    * @return true if the student is successfully dropped, false otherwise.
@@ -173,6 +182,7 @@ public class Course implements Serializable {
    *
    * @return A formatted string containing the course details.
    */
+  @Override
   public String toString() {
     return "\nInstructor: "
         + instructorName
@@ -196,19 +206,6 @@ public class Course implements Serializable {
   }
 
   /**
-   * Sets a new location for a course. Cannot be null or empty string.
-   *
-   * @param newLocation the name of the new location to assign to the course.
-   * @throws IllegalArgumentException if {@code newLocation} is null or an empty string.
-   */
-  public void reassignLocation(String newLocation) {
-    if (newLocation == null || newLocation.trim().isEmpty()) {
-      throw new IllegalArgumentException("Location cannot be null or empty.");
-    }
-    this.courseLocation = newLocation;
-  }
-
-  /**
    * Sets a new time for a course. Must match the expected format below.
    *
    * @param newTime the new time (string).
@@ -227,11 +224,15 @@ public class Course implements Serializable {
   }
 
   /**
-   * Returns boolean to determine if a course is full or not.
+   * Sets a new location for a course. Cannot be null or empty string.
    *
-   * @return true if full; else false.
+   * @param newLocation the name of the new location to assign to the course.
+   * @throws IllegalArgumentException if {@code newLocation} is null or an empty string.
    */
-  public boolean isCourseFull() {
-    return enrolledStudentCount >= enrollmentCapacity;
+  public void reassignLocation(String newLocation) {
+    if (newLocation == null || newLocation.trim().isEmpty()) {
+      throw new IllegalArgumentException("Location cannot be null or empty.");
+    }
+    this.courseLocation = newLocation;
   }
 }

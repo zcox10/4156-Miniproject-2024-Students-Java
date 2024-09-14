@@ -1,7 +1,7 @@
 package dev.coms4156.project.individualproject;
 
-import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,36 +21,6 @@ public class RouteController {
       "Attribute was updated successfully.";
 
   /**
-   * Helper function to determine if a department exists.
-   *
-   * @param deptCode A {@code String} representing the department the user wishes to retrieve.
-   * @return A {@code boolean} determining if department exists or not.
-   */
-  protected boolean doesDepartmentExist(String deptCode) {
-    return retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;
-  }
-
-  /**
-   * Helper function to determine if a course exists.
-   *
-   * @param deptCode A {@code String} representing the department the user wishes to retrieve.
-   * @param courseCode A {@code int} representing the course the user wishes to retrieve.
-   * @return A {@code boolean} determining if a course exists or not.
-   */
-  protected boolean doesCourseExist(String deptCode, int courseCode) {
-    return retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;
-  }
-
-  /**
-   * Helper function to retrieve a department's mapping.
-   *
-   * @return A hashmap containing all departments and their designated properties.
-   */
-  protected HashMap<String, Department> retrieveDeptMapping() {
-    return IndividualProjectApplication.myFileDatabase.getDepartmentMapping();
-  }
-
-  /**
    * Redirects to the homepage.
    *
    * @return A String containing the name of the html file to be loaded.
@@ -67,62 +37,6 @@ public class RouteController {
   }
 
   /**
-   * Returns the details of the specified department.
-   *
-   * @param deptCode A {@code String} representing the department the user wishes to retrieve.
-   * @return A {@code ResponseEntity} object containing either the details of the Department and an
-   *     HTTP 200 response or, an appropriate message indicating the proper response.
-   */
-  @GetMapping(value = "/retrieveDept", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> retrieveDepartment(@RequestParam(value = DEPT_CODE) String deptCode) {
-    try {
-      if (!retrieveDeptMapping().containsKey(deptCode.toUpperCase(Locale.ENGLISH))) {
-        return new ResponseEntity<>(DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND);
-      } else {
-        return new ResponseEntity<>(
-            retrieveDeptMapping().get(deptCode.toUpperCase(Locale.ENGLISH)).toString(),
-            HttpStatus.OK);
-      }
-
-    } catch (Exception e) {
-      return handleException(e);
-    }
-  }
-
-  /**
-   * Displays the details of the requested course to the user or displays the proper error message
-   * in response to the request.
-   *
-   * @param deptCode A {@code String} representing the department the user wishes to find the course
-   *     in.
-   * @param courseCode A {@code int} representing the course the user wishes to retrieve.
-   * @return A {@code ResponseEntity} object containing either the details of the course and an HTTP
-   *     200 response or, an appropriate message indicating the proper response.
-   */
-  @GetMapping(value = "/retrieveCourse", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> retrieveCourse(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode) {
-    try {
-      if (doesDepartmentExist(deptCode)) {
-        HashMap<String, Course> coursesMapping =
-            retrieveDeptMapping().get(deptCode).getCourseSelection();
-
-        if (!coursesMapping.containsKey(Integer.toString(courseCode))) {
-          return new ResponseEntity<>(COURSE_NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else {
-          return new ResponseEntity<>(
-              coursesMapping.get(Integer.toString(courseCode)).toString(), HttpStatus.OK);
-        }
-      } else {
-        return new ResponseEntity<>(DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND);
-      }
-    } catch (Exception e) {
-      return handleException(e);
-    }
-  }
-
-  /**
    * Displays whether the course has at minimum reached its enrollmentCapacity.
    *
    * @param deptCode A {@code String} representing the department the user wishes to find the course
@@ -133,8 +47,7 @@ public class RouteController {
    */
   @GetMapping(value = "/isCourseFull", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> isCourseFull(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode) {
+      @RequestParam String deptCode, @RequestParam int courseCode) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // determine isCourseFull() when provided a deptCode and courseCode
@@ -155,6 +68,104 @@ public class RouteController {
   }
 
   /**
+   * Helper function to determine if a course exists.
+   *
+   * @param deptCode A {@code String} representing the department the user wishes to retrieve.
+   * @param courseCode A {@code int} representing the course the user wishes to retrieve.
+   * @return A {@code boolean} determining if a course exists or not.
+   */
+  protected boolean doesCourseExist(String deptCode, int courseCode) {
+    return retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;
+  }
+
+  /**
+   * Helper function to retrieve a department's mapping.
+   *
+   * @return A hashmap containing all departments and their designated properties.
+   */
+  protected Map<String, Department> retrieveDeptMapping() {
+    return IndividualProjectApplication.myFileDatabase.getDepartmentMapping();
+  }
+
+  /**
+   * Handles exceptions that occur during the execution of requests. Logs the exception details to
+   * the console and returns a generic error response 200 status. This method is used to provide a
+   * generic error response for exceptions encountered in IndividualProject.
+   *
+   * @param e The exception that was thrown and needs to be handled.
+   * @return A {@link ResponseEntity} containing a generic error message HTTP 200 status.
+   */
+  private ResponseEntity<?> handleException(Exception e) {
+    System.out.println(e.toString());
+    return new ResponseEntity<>("An Error has occurred", HttpStatus.OK);
+  }
+
+  /**
+   * Displays the details of the requested course to the user or displays the proper error message
+   * in response to the request.
+   *
+   * @param deptCode A {@code String} representing the department the user wishes to find the course
+   *     in.
+   * @param courseCode A {@code int} representing the course the user wishes to retrieve.
+   * @return A {@code ResponseEntity} object containing either the details of the course and an HTTP
+   *     200 response or, an appropriate message indicating the proper response.
+   */
+  @GetMapping(value = "/retrieveCourse", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> retrieveCourse(
+      @RequestParam String deptCode, @RequestParam int courseCode) {
+    try {
+      if (doesDepartmentExist(deptCode)) {
+        Map<String, Course> coursesMapping =
+            retrieveDeptMapping().get(deptCode).getCourseSelection();
+
+        if (!coursesMapping.containsKey(Integer.toString(courseCode))) {
+          return new ResponseEntity<>(COURSE_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else {
+          return new ResponseEntity<>(
+              coursesMapping.get(Integer.toString(courseCode)).toString(), HttpStatus.OK);
+        }
+      } else {
+        return new ResponseEntity<>(DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Helper function to determine if a department exists.
+   *
+   * @param deptCode A {@code String} representing the department the user wishes to retrieve.
+   * @return A {@code boolean} determining if department exists or not.
+   */
+  protected boolean doesDepartmentExist(String deptCode) {
+    return retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;
+  }
+
+  /**
+   * Returns the details of the specified department.
+   *
+   * @param deptCode A {@code String} representing the department the user wishes to retrieve.
+   * @return A {@code ResponseEntity} object containing either the details of the Department and an
+   *     HTTP 200 response or, an appropriate message indicating the proper response.
+   */
+  @GetMapping(value = "/retrieveDept", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> retrieveDepartment(@RequestParam String deptCode) {
+    try {
+      if (!retrieveDeptMapping().containsKey(deptCode.toUpperCase(Locale.ENGLISH))) {
+        return new ResponseEntity<>(DEPARTMENT_NOT_FOUND, HttpStatus.NOT_FOUND);
+      } else {
+        return new ResponseEntity<>(
+            retrieveDeptMapping().get(deptCode.toUpperCase(Locale.ENGLISH)).toString(),
+            HttpStatus.OK);
+      }
+
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
    * Displays the number of majors in the specified department.
    *
    * @param deptCode A {@code String} representing the department the user wishes to find number of
@@ -164,7 +175,7 @@ public class RouteController {
    *     response.
    */
   @GetMapping(value = "/getMajorCountFromDept", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getMajorCtFromDept(@RequestParam(value = DEPT_CODE) String deptCode) {
+  public ResponseEntity<?> getMajorCtFromDept(@RequestParam String deptCode) {
     try {
       if (doesDepartmentExist(deptCode)) {
         int numberOfMajors = retrieveDeptMapping().get(deptCode).getNumberOfMajors();
@@ -187,7 +198,7 @@ public class RouteController {
    *     response.
    */
   @GetMapping(value = "/idDeptChair", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> identifyDeptChair(@RequestParam(value = DEPT_CODE) String deptCode) {
+  public ResponseEntity<?> identifyDeptChair(@RequestParam String deptCode) {
     try {
       if (doesDepartmentExist(deptCode)) {
         String departmentChair = retrieveDeptMapping().get(deptCode).getDepartmentChair();
@@ -211,8 +222,7 @@ public class RouteController {
    */
   @GetMapping(value = "/findCourseLocation", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> findCourseLocation(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode) {
+      @RequestParam String deptCode, @RequestParam int courseCode) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // retrieves the courseLocation via a specified deptCode and courseCode
@@ -245,8 +255,7 @@ public class RouteController {
    */
   @GetMapping(value = "/findCourseInstructor", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> findCourseInstructor(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode) {
+      @RequestParam String deptCode, @RequestParam int courseCode) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // retrieve instructorName via a specified deptCode and courseCode
@@ -279,8 +288,7 @@ public class RouteController {
    */
   @GetMapping(value = "/findCourseTime", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> findCourseTime(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode) {
+      @RequestParam String deptCode, @RequestParam int courseCode) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // retrieve courseTimeSlot via a specified deptCode and courseCode
@@ -307,7 +315,7 @@ public class RouteController {
    *     message or the proper status code in tune with what has happened.
    */
   @PatchMapping(value = "/addMajorToDept", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> addMajorToDept(@RequestParam(value = DEPT_CODE) String deptCode) {
+  public ResponseEntity<?> addMajorToDept(@RequestParam String deptCode) {
     try {
       if (doesDepartmentExist(deptCode)) {
         // add person to specified deptCode major
@@ -328,7 +336,7 @@ public class RouteController {
    *     message or the proper status code in tune with what has happened.
    */
   @PatchMapping(value = "/removeMajorFromDept", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> removeMajorFromDept(@RequestParam(value = DEPT_CODE) String deptCode) {
+  public ResponseEntity<?> removeMajorFromDept(@RequestParam String deptCode) {
     try {
       if (doesDepartmentExist(deptCode)) {
         // drop person to specified deptCode major
@@ -351,8 +359,7 @@ public class RouteController {
    */
   @PatchMapping(value = "/dropStudentFromCourse", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> dropStudent(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode) {
+      @RequestParam String deptCode, @RequestParam int courseCode) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         boolean isStudentDropped =
@@ -390,9 +397,7 @@ public class RouteController {
    */
   @PatchMapping(value = "/setEnrollmentCount", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> setEnrollmentCount(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode,
-      @RequestParam(value = "count") int count) {
+      @RequestParam String deptCode, @RequestParam int courseCode, @RequestParam int count) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // setEnrolledStudentCount via specified deptCode and courseCode
@@ -424,9 +429,7 @@ public class RouteController {
    */
   @PatchMapping(value = "/changeCourseTime", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> changeCourseTime(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode,
-      @RequestParam(value = "time") String time) {
+      @RequestParam String deptCode, @RequestParam int courseCode, @RequestParam String time) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // reassignTime() based on designated courseCode, deptCode, and time
@@ -458,9 +461,7 @@ public class RouteController {
    */
   @PatchMapping(value = "/changeCourseTeacher", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> changeCourseTeacher(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode,
-      @RequestParam(value = "teacher") String teacher) {
+      @RequestParam String deptCode, @RequestParam int courseCode, @RequestParam String teacher) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // reassignInstructor based on specified deptCode, courseCode, and new instructor
@@ -494,9 +495,7 @@ public class RouteController {
    */
   @PatchMapping(value = "/changeCourseLocation", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> changeCourseLocation(
-      @RequestParam(value = DEPT_CODE) String deptCode,
-      @RequestParam(value = COURSE_CODE) int courseCode,
-      @RequestParam(value = "location") String location) {
+      @RequestParam String deptCode, @RequestParam int courseCode, @RequestParam String location) {
     try {
       if (doesCourseExist(deptCode, courseCode)) {
         // reassignLocation based on deptCode, courseCode, and new location
@@ -512,18 +511,5 @@ public class RouteController {
     } catch (Exception e) {
       return handleException(e);
     }
-  }
-
-  /**
-   * Handles exceptions that occur during the execution of requests. Logs the exception details to
-   * the console and returns a generic error response 200 status. This method is used to provide a
-   * generic error response for exceptions encountered in IndividualProject.
-   *
-   * @param e The exception that was thrown and needs to be handled.
-   * @return A {@link ResponseEntity} containing a generic error message HTTP 200 status.
-   */
-  private ResponseEntity<?> handleException(Exception e) {
-    System.out.println(e.toString());
-    return new ResponseEntity<>("An Error has occurred", HttpStatus.OK);
   }
 }

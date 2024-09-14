@@ -2,7 +2,6 @@ package dev.coms4156.project.individualproject;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +10,7 @@ import java.util.Map;
  */
 public class Department implements Serializable {
   @Serial private static final long serialVersionUID = 234567L;
-  private final HashMap<String, Course> courses;
+  private final Map<String, Course> courses;
   private final String departmentChair;
   private final String deptCode;
   private int numberOfMajors;
@@ -20,15 +19,12 @@ public class Department implements Serializable {
    * Constructs a new Department object with the given parameters.
    *
    * @param deptCode The code of the department.
-   * @param courses A HashMap containing courses offered by the department.
+   * @param courses A Map containing courses offered by the department.
    * @param departmentChair The name of the department chair.
    * @param numberOfMajors The number of majors in the department.
    */
   public Department(
-      String deptCode,
-      HashMap<String, Course> courses,
-      String departmentChair,
-      int numberOfMajors) {
+      String deptCode, Map<String, Course> courses, String departmentChair, int numberOfMajors) {
 
     // check department code for null/empty-string
     if (deptCode == null || deptCode.trim().isEmpty()) {
@@ -51,6 +47,11 @@ public class Department implements Serializable {
     this.numberOfMajors = numberOfMajors;
   }
 
+  /** Gets the department code. */
+  public String getDepartmentCode() {
+    return this.deptCode;
+  }
+
   /**
    * Gets the number of majors in the department.
    *
@@ -69,17 +70,12 @@ public class Department implements Serializable {
     return this.departmentChair;
   }
 
-  /** Gets the department code. */
-  public String getDepartmentCode() {
-    return this.deptCode;
-  }
-
   /**
    * Gets the courses offered by the department.
    *
-   * @return A HashMap containing courses offered by the department.
+   * @return A Map containing courses offered by the department.
    */
-  public HashMap<String, Course> getCourseSelection() {
+  public Map<String, Course> getCourseSelection() {
     return this.courses;
   }
 
@@ -96,24 +92,6 @@ public class Department implements Serializable {
               + "department.");
     }
     this.numberOfMajors--;
-  }
-
-  /**
-   * Adds a new course to the department's course selection.
-   *
-   * @param courseId The ID of the course to add.
-   * @param course The Course object to add.
-   */
-  public void addCourse(String courseId, Course course) {
-    // ensure courseId is not null/empty-string
-    if (courseId == null || courseId.trim().isEmpty()) {
-      throw new IllegalArgumentException("courseId cannot be null or empty.");
-    }
-    // ensure course is not null
-    if (course == null) {
-      throw new IllegalArgumentException("Course cannot be null.");
-    }
-    courses.put(courseId, course);
   }
 
   /**
@@ -136,10 +114,29 @@ public class Department implements Serializable {
   }
 
   /**
+   * Adds a new course to the department's course selection.
+   *
+   * @param courseId The ID of the course to add.
+   * @param course The Course object to add.
+   */
+  public void addCourse(String courseId, Course course) {
+    // ensure courseId is not null/empty-string
+    if (courseId == null || courseId.trim().isEmpty()) {
+      throw new IllegalArgumentException("courseId cannot be null or empty.");
+    }
+    // ensure course is not null
+    if (course == null) {
+      throw new IllegalArgumentException("Course cannot be null.");
+    }
+    courses.put(courseId, course);
+  }
+
+  /**
    * Returns a string representation of the department, including its code and the courses offered.
    *
    * @return A string representing the department.
    */
+  @Override
   public String toString() {
     StringBuilder result = new StringBuilder();
     if (!courses.isEmpty()) {

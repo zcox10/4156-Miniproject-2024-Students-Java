@@ -90,6 +90,7 @@
           <rulesets>
             <ruleset>category/java/errorprone.xml</ruleset>
             <ruleset>rulesets/java/maven-pmd-plugin-default.xml</ruleset>
+            <ruleset>rulesets/java/quickstart.xml</ruleset>
           </rulesets>
         </configuration>
         <executions>

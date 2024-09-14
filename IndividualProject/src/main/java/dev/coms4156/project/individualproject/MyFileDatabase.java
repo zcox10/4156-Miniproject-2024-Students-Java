@@ -21,7 +21,7 @@ public class MyFileDatabase {
   private final String filePath;
 
   /** The mapping of department names to Department objects. */
-  private HashMap<String, Department> departmentMapping;
+  private Map<String, Department> departmentMapping;
 
   /**
    * Constructs a MyFileDatabase object and loads up the data structure with the contents of the
@@ -49,25 +49,16 @@ public class MyFileDatabase {
   }
 
   /**
-   * Sets the department mapping of the database.
-   *
-   * @param mapping the mapping of department names to Department objects
-   */
-  public void setMapping(HashMap<String, Department> mapping) {
-    this.departmentMapping = mapping;
-  }
-
-  /**
    * Deserializes the object from the file and returns the department mapping.
    *
    * @return the deserialized department mapping
    */
   @SuppressWarnings("unchecked")
-  private HashMap<String, Department> deSerializeObjectFromFile() {
+  private Map<String, Department> deSerializeObjectFromFile() {
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
       Object obj = in.readObject();
       if (obj instanceof HashMap) {
-        return (HashMap<String, Department>) obj;
+        return (Map<String, Department>) obj;
       } else {
         throw new IllegalArgumentException("Invalid object type in file.");
       }
@@ -75,6 +66,15 @@ public class MyFileDatabase {
       e.printStackTrace();
       return new HashMap<>();
     }
+  }
+
+  /**
+   * Sets the department mapping of the database.
+   *
+   * @param mapping the mapping of department names to Department objects
+   */
+  public void setMapping(Map<String, Department> mapping) {
+    this.departmentMapping = mapping;
   }
 
   /**
@@ -95,7 +95,7 @@ public class MyFileDatabase {
    *
    * @return the department mapping
    */
-  public HashMap<String, Department> getDepartmentMapping() {
+  public Map<String, Department> getDepartmentMapping() {
     return this.departmentMapping;
   }
 
