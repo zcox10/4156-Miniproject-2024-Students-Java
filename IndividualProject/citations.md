@@ -10,4 +10,5 @@ individual processes detailed in the assignment.
   IntelliJ ([StackOverflow post](https://stackoverflow.com/questions/42979700/how-to-configure-google-java-code-formatter-in-intellij-idea-17))
 - How to Write Doc Comments for the Javadoc
   Tool ([Technical Article via Oracle](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html))
-- 
+- Spoke with Sree in OH to discuss test cases,
+  particularly [mockMvc](https://docs.spring.io/spring-framework/reference/testing/spring-mvc-test-framework/server-performing-requests.html)

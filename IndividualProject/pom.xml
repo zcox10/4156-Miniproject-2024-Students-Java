@@ -87,6 +87,10 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
           <linkXRef>false</linkXRef>
+          <rulesets>
+            <ruleset>category/java/errorprone.xml</ruleset>
+            <ruleset>rulesets/java/maven-pmd-plugin-default.xml</ruleset>
+          </rulesets>
         </configuration>
         <executions>
           <execution>

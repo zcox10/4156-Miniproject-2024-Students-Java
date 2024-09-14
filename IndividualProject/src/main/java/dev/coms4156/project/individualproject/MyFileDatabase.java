@@ -11,6 +11,12 @@ import java.util.Map;
 /** This class represents a file-based database containing department mappings. */
 public class MyFileDatabase {
 
+  /** Constant for loading database from file. */
+  private static final int LOAD_FROM_FILE = 0;
+
+  /** Constant for initializing with empty mapping. */
+  private static final int INITIALIZE_EMPTY = 1;
+
   /** The path to the file containing the database entries. */
   private final String filePath;
 
@@ -26,15 +32,20 @@ public class MyFileDatabase {
    */
   public MyFileDatabase(int flag, String filePath) {
     this.filePath = filePath;
-    if (flag == 0) {
-      // load database from file
-      this.departmentMapping = deSerializeObjectFromFile();
-    } else if (flag == 1) {
+    this.departmentMapping = new HashMap<>(); // Initialize with an empty mapping
+    if (flag == LOAD_FROM_FILE) {
+      initializeFromFile();
+    } else if (flag == INITIALIZE_EMPTY) {
       // initialize with empty mapping
       this.departmentMapping = new HashMap<>();
     } else {
       throw new IllegalArgumentException("Invalid flag value: " + flag);
     }
+  }
+
+  /** Initializes the database by loading data from the file. */
+  private void initializeFromFile() {
+    this.departmentMapping = deSerializeObjectFromFile();
   }
 
   /**
@@ -52,7 +63,7 @@ public class MyFileDatabase {
    * @return the deserialized department mapping
    */
   @SuppressWarnings("unchecked")
-  public HashMap<String, Department> deSerializeObjectFromFile() {
+  private HashMap<String, Department> deSerializeObjectFromFile() {
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
       Object obj = in.readObject();
       if (obj instanceof HashMap) {

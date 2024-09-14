@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  * <p>This class contains test cases to validate the functionality of the {@link Course} class
  * methods.
  */
-public class CourseUnitTests {
+public class CourseTests {
 
   /** The test course instance used for testing. */
   private Course testCourse;

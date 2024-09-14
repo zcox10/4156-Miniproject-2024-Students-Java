@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  * <p>This class contains test cases to validate the functionality of the {@link
  * IndividualProjectApplication} class methods.
  */
-public class IndividualProjectApplicationTests extends MyFileDatabaseTests {
+public class IndividualProjectApplicationTests extends InitializeDatabase {
 
   private IndividualProjectApplication ipa;
   private MyFileDatabase mockDb;

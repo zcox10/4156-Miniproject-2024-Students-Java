@@ -6,10 +6,10 @@
     - **Type**: Bug
     - **Description**: `enrolledStudent()` only adds a student to a course, it does not check if a
       course is full or not. Additionally, it always returns false; it should return true if a
-      student is successfully enrolled
+      student is successfully enrolled.
     - **Fix**: Add an "if" statement to `enrollStudent()` to check if a course is full. If it is not
       full, increment the `enrolledStudentCount` by 1; otherwise return `false` indicating the class
-      is full
+      is full.
 - **Method Name**: `dropStudent()`
     - **Type**: Bug
     - **Description**: `dropStudent()` only decrements the `enrolledStudentCount`, it does not check
@@ -18,12 +18,12 @@
       `false`. It should return `true` if we successfully update the `enrolledStudentCount`.
     - **Fix**: Add an "if" statement to `dropStudent()` to check if a course has any students. If it
       has at least 1 student, decrement the `enrolledStudentCount` by 1; otherwise return `false`
-      indicating the class has no students
+      indicating the class has no students.
 - **Method Name**: `getCourseTimeSlot()`, `getEnrollmentCapacity()`, and
   `getEnrolledStudentCount()`
-    - **Type**: Added helper methods to retrieve private params
+    - **Type**: Additions
     - **Description**: Added the `getCourseTimeSlot()`, `getEnrollmentCapacity()`, and
-      `getEnrolledStudentCount()` methods for ease of testing
+      `getEnrolledStudentCount()` methods for ease of testing.
 - **Method Name**: `reassignInstructor()`
     - **Type**: Bug
     - **Description**: `reassignInstructor()` does not check if the input is an empty string or
@@ -38,7 +38,7 @@
     - **Type**: Bug
     - **Description**: `reassignTime()` does not perform any input validation for the course time.
     - **Fix**: Validating the input with regex to ensure the course time matches `HH:MM-HH:MM`,
-      `H:MM-HH:MM`, or `HH:MM-H:MM`
+      `H:MM-HH:MM`, or `HH:MM-H:MM`.
 - **Method Name**: `setEnrolledStudentCount()`
     - **Type**: Bug
     - **Description**: The method does not have a validation check to ensure the enrollment `count`
@@ -55,14 +55,14 @@
 - **Method Name**: `getNumberOfMajors()`
     - **Type**: Bug
     - **Description**: The method returns `-this.numberOfMajors` (negative value), and not the
-      number of majors stored in `this.numberOfMajors`
-    - **Fix**: Change `-this.numberOfMajors` to `this.numberOfMajors`
+      number of majors stored in `this.numberOfMajors`.
+    - **Fix**: Change `-this.numberOfMajors` to `this.numberOfMajors`.
 - **Method Name**: `getDepartmentChair()`
     - **Type**: Bug
     - **Description**: The method returns the string `"this.departmentChair"` and not the actual
-      value `this.departmentChair`
+      value `this.departmentChair`.
     - **Fix**: Remove double quotes of `"this.departmentChair"` and return the value stored in
-      `this.departmentChair`
+      `this.departmentChair`.
 - **Method Name**: `dropPersonFromMajor()`
     - **Type**: Bug
     - **Description**: There is no input validation if the number of majors is <= 0 in a department.
@@ -70,8 +70,7 @@
 - **Method Name**: `addCourse()`
     - **Type**: Bug
     - **Description**: There is no input validation to check if the `courseId` is non-null and not
-      an
-      empty string. Additionally, no check to ensure that `course` is not null
+      an empty string. Additionally, no check to ensure that `course` is not null.
     - **Fix**: Throw an `IllegalArgumentException` if the `course` is null or `courseId` is
       null/empty string.
 - **Method Name**: `Department.toString()`.
@@ -85,11 +84,11 @@
 
 - **Variable Name**: `filePath`.
     - **Type**: Bug
-    - **Description**: `filePath` variable should be final
+    - **Description**: `filePath` variable should be final.
     - **Fix**: `private final String filePath;`
 - **Method Name**: `MyFileDatabase constructor`
     - **Type**: Bug
-    - **Description**: We only perform an action when flag is set to `0`
+    - **Description**: We only perform an action when flag is set to `0`.
     - **Fix**: When `flag==1`, initialize `this.departmentMapping` to an empty `HashMap` by default
       in the constructor; else throw `IllegalArgumentException`.
 - **Method Name**: `deSerializeObjectFromFile()`.
@@ -102,3 +101,38 @@
     - **Description**: there is no check to see if `departmentMapping` is null or not.
     - **Fix**: add an if-statement to see if `departmentMapping` is null. If it is null, print
       `"No department data available."`; else print departments.
+
+### Bugs/Updates in `RouteController`
+
+- **Method Name**: `retrieveDepartment()`.
+    - **Type**: Bug
+    - **Description**: if the department code is not found, returns `HttpStatus.OK`, and if it is
+      found, returns `HttpStatus.NOT_FOUND`.
+    - **Fix**: These `HttpStatus` responses should be swapped. If the department code is not found,
+      return `HttpStatus.NOT_FOUND`. If it is found, output `HttpStatus.OK`
+- **Method Name**: `retrieveCourse()`.
+    - **Type**: Bug
+    - **Description**: if the courseCode is found, we return a status of `HttpStatus.FORBIDDEN`.
+    - **Fix**: Ensure a successful lookup of the courseCode and its content returns an
+      `HttpStatus.OK`.
+- **Method Name**: `doesDepartmentExist()`.
+    - **Type**: Addition
+    - **Description**: Created a helper method, `doesDepartmentExist()` to utilize throughout
+      various methods.
+- **Method Name**: `doesCourseExist()`.
+    - **Type**: Addition
+    - **Description**: Created a helper method, `doesCourseExist()` to utilize throughout
+      various methods.
+- **Method Name**: `retrieveDeptMapping()`.
+    - **Type**: Addition
+    - **Description**: Created a helper method, `retrieveDeptMapping()` to utilize throughout
+      various methods. Pulls from
+      `IndividualProjectApplication.myFileDatabase.getDepartmentMapping()`.
+- **Method Name**: `getMajorCtFromDept()`.
+    - **Type**: Bug
+    - **Description**: Prints the number of majors * -1.
+    - **Fix**: Ensure the proper output for `getNumberOfMajors()`.
+- **Method Name**: `getMajorCtFromDept()`.
+    - **Type**: Bug
+    - **Description**: When department not found, `HttpStatus` is `FORBIDDEN`.
+    - **Fix**: Change `HttpStatus` to `NOT_FOUND`.
