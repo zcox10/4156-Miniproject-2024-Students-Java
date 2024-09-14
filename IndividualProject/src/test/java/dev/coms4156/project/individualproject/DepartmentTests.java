@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
  * <p>This class contains test cases to validate the functionality of the {@link Department} class
  * methods.
  */
-public class DepartmentUnitTests {
+public class DepartmentTests {
 
   /** The test Department instance used for testing. */
   private Department department;
